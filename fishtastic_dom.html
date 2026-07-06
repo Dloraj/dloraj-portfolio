@@ -1,0 +1,1422 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fishtastic - Aquaculture Water Quality Monitoring</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <!-- Local Tailwind CSS Build -->
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <!-- Include Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Glassmorphism effect */
+        .glassmorphism {
+            background: rgba(23, 25, 35, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .dashboard-bg {
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Background blob effect */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            z-index: -1;
+        }
+        
+        /* Water background effect */
+        .water-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+        
+        .water-bg::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            right: -50%;
+            bottom: -50%;
+            background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.05) 50%, rgba(15, 23, 42, 0) 80%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Fish animations */
+        .fish {
+            position: absolute;
+            opacity: 0.7;
+            animation: swim 15s linear infinite;
+        }
+
+        .fish-1 {
+            top: 15%;
+            left: -100px;
+            animation-duration: 25s;
+            animation-delay: 0s;
+        }
+
+        .fish-2 {
+            top: 40%;
+            left: -100px;
+            animation-duration: 20s;
+            animation-delay: 5s;
+        }
+
+        .fish-3 {
+            top: 70%;
+            left: -100px;
+            animation-duration: 30s;
+            animation-delay: 2s;
+        }
+
+        @keyframes swim {
+            0% {
+                transform: translateX(-100px) scaleX(1);
+            }
+            45% {
+                transform: translateX(calc(100vw + 100px)) scaleX(1);
+            }
+            50% {
+                transform: translateX(calc(100vw + 100px)) scaleX(-1);
+            }
+            95% {
+                transform: translateX(-100px) scaleX(-1);
+            }
+            100% {
+                transform: translateX(-100px) scaleX(1);
+            }
+        }
+
+        /* Features hover effect */
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Wave animation for data flow illustration */
+        .data-wave {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .data-wave::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+            animation: dataFlow 3s linear infinite;
+        }
+        
+        @keyframes dataFlow {
+            0% { transform: translateX(-30%); }
+            100% { transform: translateX(30%); }
+        }
+
+        /* Hero section wavy bottom */
+        .wave-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+        }
+
+        .wave-bottom svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 70px;
+        }
+
+        /* Responsive design adjustments */
+        @media (max-width: 768px) {
+            .wave-bottom svg {
+                height: 40px;
+            }
+        }
+
+        /* Add this to your existing CSS */
+        .faq-question {
+            transition: background-color 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .faq-answer {
+            height: 0;
+            overflow: hidden;
+            transition: height 0.3s ease;
+        }
+
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+
+        /* Remove default button styling */
+        .faq-question {
+            background: none;
+            border: none;
+            outline: none;
+            color: inherit;
+            font: inherit;
+        }
+    </style>
+</head>
+
+<body class="dashboard-bg font-sans text-gray-100 min-h-screen">
+
+
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading - Fishtastic</title>
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    
+    /* Loader wrapper with dashboard background */
+    #loader-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      background-attachment: fixed;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: all 0.5s ease;
+    }
+    
+    /* Loader content container with glassmorphism */
+    #loader-content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(23, 25, 35, 0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 32px;
+      animation: pulse 2s infinite;
+    }
+    
+    /* SVG container */
+    #loader {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    #loader img {
+      width: 120px;
+      height: auto;
+      filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.3));
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    /* Progress bar with primary blue to teal gradient */
+    .progress-bar {
+      width: 180px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      margin-top: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 30%;
+      background: linear-gradient(to right, #3B82F6, #10B981);
+      border-radius: 2px;
+      animation: progress 1.5s ease infinite;
+    }
+    
+    /* Loading text */
+    .loading-text {
+      margin-top: 16px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.8);
+      letter-spacing: 0.5px;
+    }
+    
+    /* Hide animation */
+    #loader-wrapper.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    
+    /* Background blobs like in the dashboard */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(40px);
+      z-index: -1;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .blob-1 {
+      width: 300px;
+      height: 300px;
+      background: rgba(59, 130, 246, 0.1);
+      top: 20%;
+      left: 20%;
+      animation-delay: 0s;
+    }
+    
+    .blob-2 {
+      width: 250px;
+      height: 250px;
+      background: rgba(16, 185, 129, 0.1);
+      bottom: 20%;
+      right: 20%;
+      animation-delay: 1s;
+    }
+    
+    /* Water background effect */
+    .water-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      z-index: -1;
+    }
+    
+    .water-bg::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      right: -50%;
+      bottom: -50%;
+      background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.05) 50%, rgba(15, 23, 42, 0) 80%);
+      animation: rotate 20s linear infinite;
+    }
+    
+    /* Animations */
+    @keyframes progress {
+      0% {
+        left: -30%;
+        width: 30%;
+      }
+      50% {
+        left: 100%;
+        width: 30%;
+      }
+      100% {
+        left: 100%;
+        width: 0;
+      }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      #loader-wrapper {
+        background-attachment: scroll;
+      }
+      
+      /* Reduce blob sizes on mobile */
+      .blob {
+        opacity: 0.5;
+        width: 150px !important;
+        height: 150px !important;
+      }
+      
+      #loader-content {
+        padding: 24px;
+      }
+    }
+  </style>
+
+
+  <div id="loader-wrapper" class="hidden">
+    <!-- Background blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    
+    <!-- Water background effect -->
+    <div class="water-bg"></div>
+    
+    <div id="loader-content">
+      <div id="loader">
+        <!-- Using your original SVG file -->
+        <img src="/fishtastic/lp-assets/loading.svg" alt="Loading animation">
+      </div>
+      <div class="progress-bar"></div>
+      <div class="loading-text">Loading Fishtastic...</div>
+    </div>
+  </div>
+
+  <script>
+    // Enhanced loader control functions
+    function showLoader() {
+      document.getElementById('loader-wrapper')?.classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // Prevent scrolling while loading
+    }
+    
+    function hideLoader() {
+      const loader = document.getElementById('loader-wrapper');
+      if (loader) {
+        loader.classList.add('hidden');
+        // Re-enable scrolling after transition completes
+        setTimeout(() => {
+          document.body.style.overflow = '';
+        }, 500);
+      }
+    }
+    
+    // Auto-hide on page load
+    window.addEventListener('load', function() {
+      // Add small delay to make sure loader is visible for a minimum time
+      setTimeout(hideLoader, 800);
+    });
+    
+    // Example: Manual control for specific scenarios
+    // For AJAX requests or dynamic content loading:
+    // showLoader();
+    // fetch('/your-data')
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     // Process data
+    //     hideLoader();
+    //   });
+  </script>
+
+
+   
+<nav class="glassmorphism fixed w-full z-20">
+    <div class="container mx-auto px-4 py-3">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                                    <img src="&lt;br /&gt;
+&lt;b&gt;Warning&lt;/b&gt;:  Undefined variable $default_logo_path in &lt;b&gt;C:\xampp\htdocs\fishtastic\index.php&lt;/b&gt; on line &lt;b&gt;243&lt;/b&gt;&lt;br /&gt;
+" alt="Fishtastic Logo" class="h-12 object-contain">
+                                </div>
+
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#features" class="hover:text-primary transition-colors">Features</a>
+                <a href="#how-it-works" class="hover:text-primary transition-colors">How It Works</a>
+                <a href="#partners" class="hover:text-primary transition-colors">Partners</a>
+                <a href="#testimonials" class="hover:text-primary transition-colors">Testimonials</a>
+                <a href="#contact" class="hover:text-primary transition-colors">Contact</a>
+                <a href="access/login.php" class="bg-primary hover:bg-primary-dark text-white px-5 py-2 rounded-full transition-all transform hover:scale-105">
+                    Login
+                </a>
+            </div>
+
+            <!-- Mobile Navigation Toggle -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 animate-fadeIn">
+            <div class="flex flex-col space-y-3">
+                <a href="#features" class="hover:text-primary transition-colors py-2">Features</a>
+                <a href="#how-it-works" class="hover:text-primary transition-colors py-2">How It Works</a>
+                <a href="#partners" class="hover:text-primary transition-colors py-2">Partners</a>
+                <a href="#testimonials" class="hover:text-primary transition-colors py-2">Testimonials</a>
+                <a href="#contact" class="hover:text-primary transition-colors py-2">Contact</a>
+                <a href="access/login.php" class="bg-primary hover:bg-primary-dark text-white px-5 py-2 rounded-full transition-all transform hover:scale-105 inline-block text-center mt-2">
+                    Login
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+        <!-- Background Effects -->
+        <div class="water-bg"></div>
+        <div class="blob bg-primary opacity-10 w-96 h-96 top-20 left-20"></div>
+        <div class="blob bg-accent opacity-10 w-96 h-96 bottom-20 right-20"></div>
+        
+        <!-- Swimming fish animations -->
+        <div class="fish fish-1">
+            <i class="fas fa-fish text-primary text-4xl"></i>
+        </div>
+        <div class="fish fish-2">
+            <i class="fas fa-fish text-accent text-3xl"></i>
+        </div>
+        <div class="fish fish-3">
+            <i class="fas fa-fish text-primary-light text-5xl"></i>
+        </div>
+        
+        <div class="container mx-auto px-4 py-20 z-10">
+            <div class="flex flex-col lg:flex-row items-center">
+                <div class="lg:w-1/2 mb-12 lg:mb-0">
+                    <div class="animate-fadeIn">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                            Smart Water Quality <span class="text-primary">Monitoring</span> for Aquaculture
+                        </h1>
+                        <p class="text-lg md:text-xl text-gray-300 mb-8">
+                            Real-time monitoring system that transforms aquaculture management with IoT sensors, cloud connectivity, and intelligent analytics. In partnership with BFAR Philippines.
+                        </p>
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                            <a href="#how-it-works" class="bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-full transition-all transform hover:scale-105 text-center font-semibold">
+                                Learn More
+                            </a>
+                            <a href="access/login.php" class="bg-secondary hover:bg-secondary-dark border border-primary text-white px-8 py-3 rounded-full transition-all transform hover:scale-105 text-center font-semibold">
+                                Get Started
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 animate-float">
+                    <div class="glassmorphism rounded-3xl p-4 mx-auto max-w-lg">
+                        <img src="lp-assets/dashboard-preview.png" alt="Fishtastic Dashboard Preview" class="rounded-2xl shadow-lg w-full">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20">
+                <div class="glassmorphism rounded-xl p-6 text-center transform transition-all hover:scale-105">
+                    <div class="text-primary text-4xl font-bold mb-2">24/7</div>
+                    <div class="text-lg text-gray-300">Continuous Monitoring</div>
+                </div>
+                <div class="glassmorphism rounded-xl p-6 text-center transform transition-all hover:scale-105">
+                    <div class="text-primary text-4xl font-bold mb-2">98%</div>
+                    <div class="text-lg text-gray-300">Detection Accuracy</div>
+                </div>
+                <div class="glassmorphism rounded-xl p-6 text-center transform transition-all hover:scale-105">
+                    <div class="text-primary text-4xl font-bold mb-2">30%</div>
+                    <div class="text-lg text-gray-300">Yield Improvement</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Wave bottom -->
+        <div class="wave-bottom">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.11,143.53,111.44,221.18,94.08Z" fill="#0F172A"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-secondary-dark">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Advanced Monitoring Features</h2>
+                <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                    Our comprehensive solution provides everything you need for effective water quality management
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="glassmorphism rounded-xl p-6 feature-card">
+                    <div class="bg-primary bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-thermometer-half text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Temperature Monitoring</h3>
+                    <p class="text-gray-300">
+                        Continuous temperature tracking ensures optimal conditions for various aquatic species, with customizable alerts.
+                    </p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="glassmorphism rounded-xl p-6 feature-card">
+                    <div class="bg-primary bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-water text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">pH Level Analysis</h3>
+                    <p class="text-gray-300">
+                        Precise pH monitoring keeps water conditions balanced for healthy fish growth and sustainability.
+                    </p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="glassmorphism rounded-xl p-6 feature-card">
+                    <div class="bg-primary bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-flask text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Dissolved Oxygen</h3>
+                    <p class="text-gray-300">
+                        Track oxygen levels to prevent stress and mortality in your aquatic stock with precision sensors.
+                    </p>
+                </div>
+                
+                <!-- Feature 4 -->
+               <!-- AI Analysis Feature (replacing Turbidity) -->
+<div class="glassmorphism rounded-xl p-6 feature-card">
+    <div class="bg-primary bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+        <i class="fas fa-brain text-2xl text-primary"></i>
+    </div>
+    <h3 class="text-xl font-semibold mb-3">AI Water Analysis</h3>
+    <p class="text-gray-300">
+        Chat with our intelligent assistant to receive real-time insights, recommendations, and troubleshooting based on your water parameters.
+    </p>
+</div>
+                
+                <!-- Feature 5 -->
+                <div class="glassmorphism rounded-xl p-6 feature-card">
+                    <div class="bg-primary bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-mobile-alt text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Mobile Alerts</h3>
+                    <p class="text-gray-300">
+                        Receive instant notifications on your smartphone when parameters exceed safe thresholds.
+                    </p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="glassmorphism rounded-xl p-6 feature-card">
+                    <div class="bg-primary bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Analytics Dashboard</h3>
+                    <p class="text-gray-300">
+                        Visualize trends and patterns with our intuitive dashboard for data-driven decision making.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   <!-- How It Works Section -->
+<section id="how-it-works" class="py-20 bg-secondary">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">How Fishtastic Works</h2>
+            <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                Our end-to-end solution seamlessly connects sensors to your devices
+            </p>
+        </div>
+        
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <!-- Step 1: Sensors -->
+            <div class="md:w-1/4 mb-10 md:mb-0 text-center">
+                <div class="glassmorphism rounded-xl p-6 mx-auto max-w-xs h-64 flex flex-col justify-center relative animate-float">
+                    <div class="bg-accent bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-microchip text-2xl text-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">ESP32 Sensors</h3>
+                    <p class="text-gray-300">
+                        Advanced IoT sensors continuously collect water quality data in real-time
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Step 2: Firebase -->
+            <div class="md:w-1/4 mb-10 md:mb-0 text-center">
+                <div class="glassmorphism rounded-xl p-6 mx-auto max-w-xs h-64 flex flex-col justify-center relative data-wave animate-float">
+                    <div class="bg-primary bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-database text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Firebase Cloud</h3>
+                    <p class="text-gray-300">
+                        Secure cloud storage processes and organizes your data for instant access
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Step 3: Applications -->
+            <div class="md:w-1/4 mb-10 md:mb-0 text-center">
+                <div class="glassmorphism rounded-xl p-6 mx-auto max-w-xs h-64 flex flex-col justify-center relative animate-float">
+                    <div class="bg-accent bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-laptop-code text-2xl text-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Web Application</h3>
+                    <p class="text-gray-300">
+                        Comprehensive dashboard for monitoring and analyzing all your water parameters
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Step 4: Mobile -->
+            <div class="md:w-1/4 text-center">
+                <div class="glassmorphism rounded-xl p-6 mx-auto max-w-xs h-64 flex flex-col justify-center relative animate-float">
+                    <div class="bg-primary bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-mobile-alt text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Mobile Application</h3>
+                    <p class="text-gray-300">
+                        Monitor your aquaculture systems from anywhere with our mobile app
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Partners Section -->
+    <section id="partners" class="py-20 bg-secondary-dark">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Our Partners</h2>
+                <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                    Proud to collaborate with leading organizations in the aquaculture industry
+                </p>
+            </div>
+            
+            <div class="flex flex-col items-center">
+                <!-- BFAR Partnership -->
+                <div class="glassmorphism rounded-xl p-8 max-w-4xl mb-12">
+                    <div class="flex flex-col md:flex-row items-center">
+                        <div class="md:w-1/3 mb-6 md:mb-0 flex justify-center">
+                            <div class="w-40 h-40 rounded-full bg-white p-4 flex items-center justify-center">
+                                <img src="lp-assets/bfar.svg" alt="BFAR Logo" class="w-32 h-32 object-contain">
+                            </div>
+                        </div>
+                        <div class="md:w-2/3 md:pl-8">
+                            <h3 class="text-2xl font-bold mb-4 text-primary">Bureau of Fisheries and Aquatic Resources</h3>
+                            <p class="text-gray-300 mb-4">
+                                Official partnership with BFAR under the Department of Agriculture Philippines to improve aquaculture productivity and sustainability across the nation.
+                            </p>
+                            <p class="text-gray-400 italic">
+                                "Fishtastic represents a significant technological advancement for Philippine aquaculture, providing our farmers with accessible tools to improve productivity."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Partner Logos -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="glassmorphism rounded-xl p-6 flex items-center justify-center h-40 transition-all hover:border-primary">
+                        <img src="lp-assets/olfu.png" alt="Partner Logo" class="max-h-20">
+                    </div>
+                    <div class="glassmorphism rounded-xl p-6 flex items-center justify-center h-40 transition-all hover:border-primary">
+                        <img src="lp-assets/ccs.png" alt="Partner Logo" class="max-h-20">
+                    </div>
+                    <div class="glassmorphism rounded-xl p-6 flex items-center justify-center h-40 transition-all hover:border-primary">
+                        <img src="lp-assets/psite.png" alt="Partner Logo" class="max-h-20">
+                    </div>
+                    <div class="glassmorphism rounded-xl p-6 flex items-center justify-center h-40 transition-all hover:border-primary">
+                        <img src="lp-assets/da.png" alt="Partner Logo" class="max-h-20">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-secondary">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Success Stories</h2>
+                <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                    Hear from aquaculture professionals who have transformed their operations with Fishtastic
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+
+                <div class="glassmorphism rounded-xl p-6 h-full">
+                    <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 rounded-full overflow-hidden mr-4">
+                            <img src="lp-assets/maria.jpg" alt="User Avatar" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg">Maria Santos</h4>
+                            <p class="text-gray-400">Milkfish Hatchery, Iloilo</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 italic">
+                        "The analytics dashboard has transformed how we manage our water quality. We can now predict potential issues before they affect our stock, which has been game-changing for our operation."
+                    </p>
+                    <!-- Continuing from Testimonial 2 -->
+                    <div class="mt-4 text-primary">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+               
+                <!-- Testimonial 2 -->
+                <div class="glassmorphism rounded-xl p-6 h-full">
+                    <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 rounded-full overflow-hidden mr-4">
+                            <img src="lp-assets/marco.jpg" alt="User Avatar" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg">Marco Reyes</h4>
+                            <p class="text-gray-400">Tilapia Farm, Batangas</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 italic">
+                        "Since implementing Fishtastic, we've reduced fish mortality by 40% and improved our farm efficiency. The real-time alerts have saved our stock multiple times during power outages."
+                    </p>
+                    <div class="mt-4 text-primary">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                
+                <!-- Testimonial 3 -->
+                <div class="glassmorphism rounded-xl p-6 h-full">
+                    <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 rounded-full overflow-hidden mr-4">
+                            <img src="lp-assets/antonio.jpg" alt="User Avatar" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg">Antonio Villegas</h4>
+                            <p class="text-gray-400">Shrimp Farming Cooperative, Palawan</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 italic">
+                        "Our cooperative has seen a 35% increase in yield after just six months with Fishtastic. The system's accuracy and reliability have given us confidence to expand our operations."
+                    </p>
+                    <div class="mt-4 text-primary">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Testimonial Feature Highlight -->
+            <div class="mt-16 glassmorphism rounded-xl p-8">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-8 md:mb-0">
+                        <h3 class="text-2xl font-bold mb-4">Proven Results Across the Philippines</h3>
+                        <p class="text-gray-300 mb-6">
+                            Fishtastic has been implemented in over 200 aquaculture facilities across the Philippines, showing consistent improvements in:
+                        </p>
+                        <ul class="space-y-3">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-accent mr-3"></i>
+                                <span>Reduced fish mortality rates by an average of 32%</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-accent mr-3"></i>
+                                <span>Increased production yields by 25-40%</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-accent mr-3"></i>
+                                <span>Decreased labor costs through automation</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-accent mr-3"></i>
+                                <span>Minimized water and feed waste</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/2 md:pl-8">
+                        <div class="relative">
+                            <div class="rounded-xl overflow-hidden">
+                                <img src="lp-assets/chart.png" alt="Fishtastic Results Chart" class="w-full">
+                            </div>
+                            <div class="absolute -bottom-4 -right-4 bg-accent text-white rounded-full w-24 h-24 flex items-center justify-center text-center p-2 transform rotate-12">
+                                <div>
+                                    <div class="text-2xl font-bold">98%</div>
+                                    <div class="text-xs">Customer Satisfaction</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section 
+    <section id="pricing" class="py-20 bg-secondary-dark">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
+                <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                    Choose the plan that works best for your aquaculture operation
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                
+                <div class="glassmorphism rounded-xl overflow-hidden transition-all hover:scale-105">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-2">Basic</h3>
+                        <p class="text-gray-400 mb-6">For small-scale operations</p>
+                        <div class="flex items-baseline mb-6">
+                            <span class="text-4xl font-bold">₱2,999</span>
+                            <span class="text-gray-400 ml-2">/month</span>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-accent mr-3"></i>
+                                <span>Up to 5 sensor nodes</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-accent mr-3"></i>
+                                <span>4 parameter monitoring</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-accent mr-3"></i>
+                                <span>Basic alerts system</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-accent mr-3"></i>
+                                <span>7-day data history</span>
+                            </li>
+                            <li class="flex items-center text-gray-500">
+                                <i class="fas fa-times mr-3"></i>
+                                <span>Advanced analytics</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="px-6 pb-6">
+                        <a href="/signup" class="block bg-secondary hover:bg-secondary-dark border border-primary text-white px-6 py-3 rounded-full transition-all text-center font-semibold">
+                            Get Started
+                        </a>
+                    </div>
+                </div>
+                
+                
+                <div class="glassmorphism rounded-xl overflow-hidden relative transform scale-105 z-10 border-2 border-primary">
+                    <div class="absolute top-0 right-0 bg-primary text-white px-4 py-1 rounded-bl-lg font-semibold">
+                        Most Popular
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-2">Professional</h3>
+                        <p class="text-gray-400 mb-6">For medium-sized farms</p>
+                        <div class="flex items-baseline mb-6">
+                            <span class="text-4xl font-bold">₱4,999</span>
+                            <span class="text-gray-400 ml-2">/month</span>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-accent mr-3"></i>
+                                <span>Up to 15 sensor nodes</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-accent mr-3"></i>
+                                <span>All water parameters</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-accent mr-3"></i>
+                                <span>Advanced alert system</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-accent mr-3"></i>
+                                <span>30-day data history</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-accent mr-3"></i>
+                                <span>Basic analytics</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="px-6 pb-6">
+                        <a href="/signup" class="block bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-full transition-all text-center font-semibold">
+                            Get Started
+                        </a>
+                    </div>
+                </div>
+                
+                
+                <div class="glassmorphism rounded-xl overflow-hidden transition-all hover:scale-105">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-2">Enterprise</h3>
+                        <p class="text-gray-400 mb-6">For large operations</p>
+                        <div class="flex items-baseline mb-6">
+                            <span class="text-4xl font-bold">₱8,999</span>
+                            <span class="text-gray-400 ml-2">/month</span>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-accent mr-3"></i>
+                                <span>Unlimited sensor nodes</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-accent mr-3"></i>
+                                <span>All parameters + custom</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-accent mr-3"></i>
+                                <span>Priority alerts & support</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-accent mr-3"></i>
+                                <span>Unlimited data history</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-accent mr-3"></i>
+                                <span>Advanced analytics & AI</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="px-6 pb-6">
+                        <a href="/contact" class="block bg-secondary hover:bg-secondary-dark border border-primary text-white px-6 py-3 rounded-full transition-all text-center font-semibold">
+                            Contact Sales
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="mt-12 text-center">
+                <div class="inline-block glassmorphism rounded-full px-6 py-3 border border-accent">
+                    <span class="text-accent font-semibold">Special BFAR Subsidized Pricing Available</span> • 
+                    <a href="#contact" class="text-primary hover:underline">Inquire Now</a>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+  <!-- FAQ Section -->
+<section id="faq" class="py-20 bg-secondary-dark">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                Find answers to common questions about our water quality monitoring system
+            </p>
+        </div>
+        
+        <div class="max-w-3xl mx-auto">
+            <!-- FAQ Item 1 -->
+            <div class="faq-item glassmorphism rounded-xl mb-4">
+                <button class="faq-question w-full p-6 text-left cursor-pointer flex justify-between items-center">
+                    <h3 class="text-xl font-semibold">How accurate are the sensor readings?</h3>
+                    <svg class="faq-arrow w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer overflow-hidden h-0">
+                    <div class="p-6 pt-0">
+                        <p class="text-gray-300">
+                            Our sensors provide industry-leading accuracy with ±0.1°C for temperature, ±0.1 for pH, and ±0.2mg/L for dissolved oxygen. All sensors are calibrated and tested before installation to ensure reliable readings.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 2 -->
+            <div class="faq-item glassmorphism rounded-xl mb-4">
+                <button class="faq-question w-full p-6 text-left cursor-pointer flex justify-between items-center">
+                    <h3 class="text-xl font-semibold">What maintenance is required for the sensors?</h3>
+                    <svg class="faq-arrow w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer overflow-hidden h-0">
+                    <div class="p-6 pt-0">
+                        <p class="text-gray-300">
+                            Our sensors require minimal maintenance with recommended cleaning every 2-4 weeks depending on your water conditions. The system will automatically alert you when calibration or maintenance is needed. We also offer maintenance plans with our Professional and Enterprise packages.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 3 -->
+            <div class="faq-item glassmorphism rounded-xl mb-4">
+                <button class="faq-question w-full p-6 text-left cursor-pointer flex justify-between items-center">
+                    <h3 class="text-xl font-semibold">How is the system powered?</h3>
+                    <svg class="faq-arrow w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer overflow-hidden h-0">
+                    <div class="p-6 pt-0">
+                        <p class="text-gray-300">
+                            The standard system is powered via direct electrical connection, but we also offer solar-powered options for remote locations. All sensor nodes include a backup battery that provides up to 48 hours of continuous operation during power outages.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 4 -->
+            <div class="faq-item glassmorphism rounded-xl mb-4">
+                <button class="faq-question w-full p-6 text-left cursor-pointer flex justify-between items-center">
+                    <h3 class="text-xl font-semibold">Can I access my data when offline?</h3>
+                    <svg class="faq-arrow w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer overflow-hidden h-0">
+                    <div class="p-6 pt-0">
+                        <p class="text-gray-300">
+                            Yes, the system includes local data storage that continues to record data even when internet connectivity is lost. Once connection is restored, all data is automatically synchronized with the cloud.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 5 -->
+            <div class="faq-item glassmorphism rounded-xl">
+                <button class="faq-question w-full p-6 text-left cursor-pointer flex justify-between items-center">
+                    <h3 class="text-xl font-semibold">Are BFAR subsidies available?</h3>
+                    <svg class="faq-arrow w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer overflow-hidden h-0">
+                    <div class="p-6 pt-0">
+                        <p class="text-gray-300">
+                            Yes, through our partnership with BFAR, registered aquaculture farmers can apply for subsidies covering up to 70% of the system cost. Our team can assist with the application process and documentation requirements.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-secondary relative overflow-hidden">
+        <!-- Background Effects -->
+        <div class="blob bg-primary opacity-5 w-96 h-96 -top-20 -left-20"></div>
+        <div class="blob bg-accent opacity-5 w-96 h-96 bottom-0 right-0"></div>
+        
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Get In Touch</h2>
+                <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                    Have questions about Fishtastic? Our team is ready to help you get started.
+                </p>
+            </div>
+            
+            <div class="flex flex-col lg:flex-row">
+<!-- Contact Form -->
+<div class="lg:w-2/3 mb-12 lg:mb-0 lg:pr-8">
+    <div class="glassmorphism rounded-xl p-8">
+        <form id="contact-form" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="name" class="block text-sm font-medium mb-2">Full Name</label>
+                    <input type="text" id="name" name="name" class="w-full p-3 bg-secondary-dark border border-glass-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required="">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium mb-2">Email Address</label>
+                    <input type="email" id="email" name="email" class="w-full p-3 bg-secondary-dark border border-glass-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required="">
+                </div>
+            </div>
+            <div class="mb-6">
+                <label for="subject" class="block text-sm font-medium mb-2">Subject</label>
+                <input type="text" id="subject" name="subject" class="w-full p-3 bg-secondary-dark border border-glass-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required="">
+            </div>
+            <div class="mb-6">
+                <label for="message" class="block text-sm font-medium mb-2">Message</label>
+                <textarea id="message" name="message" rows="5" class="w-full p-3 bg-secondary-dark border border-glass-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required=""></textarea>
+            </div>
+            <button type="submit" id="submit-btn" class="bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-full transition-all transform hover:scale-105 inline-block font-semibold">
+                Send Message
+            </button>
+            <div id="form-message" class="form-message mt-4"></div>
+        </form>
+    </div>
+</div>
+                
+                <!-- Contact Information -->
+<div class="lg:w-1/3">
+    <div class="glassmorphism rounded-xl p-8 mb-6">
+        <h3 class="text-xl font-semibold mb-6">Contact Information</h3>
+        <div class="space-y-4">
+            <p class="text-gray-300">Error loading contact information. Please try again later.</p>        </div>
+    </div>
+    
+    <!-- Social Media Links -->
+    <div class="glassmorphism rounded-xl p-8">
+        <h3 class="text-xl font-semibold mb-6">Follow Us</h3>
+        <div class="flex space-x-4">
+            <p class="text-gray-300">Error loading social media links. Please try again later.</p>        </div>
+    </div>
+</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-16 bg-primary bg-opacity-10 relative overflow-hidden">
+        <div class="container mx-auto px-4 text-center">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Aquaculture Operation?</h2>
+                <p class="text-lg text-gray-300 mb-8">
+                    Join hundreds of satisfied fish farmers across the Philippines who are using Fishtastic to improve their yields and operations.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="access/login.php" class="bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-full transition-all transform hover:scale-105 text-center font-semibold">
+                        Get Started Now
+                    </a>
+                    <a href="#contact" class="bg-transparent border-2 border-primary text-primary hover:bg-primary hover:bg-opacity-10 px-8 py-3 rounded-full transition-all transform hover:scale-105 text-center font-semibold">
+                        Schedule a Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-secondary-dark">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <i class="fas fa-fish text-primary text-2xl"></i>
+                        <span class="text-xl font-bold text-white">Fishtastic</span>
+                    </div>
+                    <p class="text-gray-400 mb-6">
+                        Revolutionizing aquaculture management through smart technology and real-time monitoring.
+                    </p>
+                    <div class="flex space-x-4">
+    <p class="text-gray-400">Error loading social media links.</p></div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#features" class="text-gray-400 hover:text-primary transition-colors">Features</a></li>
+                        <li><a href="#how-it-works" class="text-gray-400 hover:text-primary transition-colors">How It Works</a></li>
+                        <li><a href="#pricing" class="text-gray-400 hover:text-primary transition-colors">Pricing</a></li>
+                        <li><a href="#testimonials" class="text-gray-400 hover:text-primary transition-colors">Testimonials</a></li>
+                        <li><a href="#faq" class="text-gray-400 hover:text-primary transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Resources -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">Resources</h4>
+                    <ul class="space-y-3">
+                        <li><a href="/blog" class="text-gray-400 hover:text-primary transition-colors">Blog</a></li>
+                        <li><a href="/case-studies" class="text-gray-400 hover:text-primary transition-colors">Case Studies</a></li>
+                        <li><a href="/documentation" class="text-gray-400 hover:text-primary transition-colors">Documentation</a></li>
+                        <li><a href="/api" class="text-gray-400 hover:text-primary transition-colors">API</a></li>
+                        <li><a href="/support" class="text-gray-400 hover:text-primary transition-colors">Support Center</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Newsletter -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">Subscribe to Our Newsletter</h4>
+                    <p class="text-gray-400 mb-4">
+                        Stay updated with the latest news and tips for aquaculture management.
+                    </p>
+                    <form class="flex">
+                        <input type="email" placeholder="Your email address" class="flex-1 py-2 px-4 bg-secondary border border-glass-border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        <button type="submit" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-r-lg transition-colors">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-gray-500 mb-4 md:mb-0">
+                    © 2025 Fishtastic. All rights reserved.
+                </div>
+                <div class="flex space-x-6">
+                    <a href="/privacy" class="text-gray-500 hover:text-primary transition-colors">Privacy Policy</a>
+                    <a href="/terms" class="text-gray-500 hover:text-primary transition-colors">Terms of Service</a>
+                    <a href="/cookies" class="text-gray-500 hover:text-primary transition-colors">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Navigation Menu Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Mobile menu functionality (keeping existing code)
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', function() {
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+            } else {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+        
+        // Close mobile menu when clicking a link
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+    }
+    
+    // FAQ accordion functionality
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', function() {
+            const faqItem = this.parentNode;
+            const answer = this.nextElementSibling;
+            const arrow = this.querySelector('.faq-arrow');
+            
+            // Close all other FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                if (item !== faqItem && item.classList.contains('active')) {
+                    const otherAnswer = item.querySelector('.faq-answer');
+                    const otherArrow = item.querySelector('.faq-arrow');
+                    
+                    item.classList.remove('active');
+                    otherAnswer.style.height = '0';
+                    otherArrow.classList.remove('rotate-180');
+                }
+            });
+            
+            // Toggle current FAQ item
+            if (faqItem.classList.contains('active')) {
+                faqItem.classList.remove('active');
+                answer.style.height = '0';
+                arrow.classList.remove('rotate-180');
+            } else {
+                faqItem.classList.add('active');
+                answer.style.height = answer.scrollHeight + 'px';
+                arrow.classList.add('rotate-180');
+            }
+        });
+    });
+});
+    </script>
+    <script>
+document.getElementById('contact-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('submit-btn');
+    const formMessage = document.getElementById('form-message');
+    
+    // Disable submit button and show loading state
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    formMessage.innerHTML = '';
+    
+    // Get form data
+    const formData = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        subject: document.getElementById('subject').value.trim(),
+        message: document.getElementById('message').value.trim()
+    };
+    
+    try {
+        const response = await fetch('submit_contact.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            // Success
+            formMessage.innerHTML = '<div class="bg-green-500 bg-opacity-20 border border-green-500 text-green-400 px-4 py-3 rounded-lg">' + result.message + '</div>';
+            document.getElementById('contact-form').reset();
+            
+            // Redirect after 2 seconds
+            setTimeout(() => {
+                window.location.href = 'index.php';
+            }, 2000);
+        } else {
+            // Error
+            formMessage.innerHTML = '<div class="bg-red-500 bg-opacity-20 border border-red-500 text-red-400 px-4 py-3 rounded-lg">' + result.message + '</div>';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        formMessage.innerHTML = '<div class="bg-red-500 bg-opacity-20 border border-red-500 text-red-400 px-4 py-3 rounded-lg">An error occurred while sending your message. Please try again.</div>';
+    } finally {
+        // Re-enable submit button
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Message';
+    }
+});
+</script>
+
+</body></html>

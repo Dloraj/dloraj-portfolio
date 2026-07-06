@@ -4,7 +4,7 @@ import ExperiencesSection from "@/components/sections/ExperiencesSection";
 import ProjectsSection from "@/components/sections/ProjectsSection";
 import AboutSection from "@/components/sections/AboutSection";
 import ContactSection from "@/components/sections/ContactSection";
-import GuestbookSection from "@/components/sections/GuestbookSection";
+import ToolboxSection from "@/components/sections/ToolboxSection";
 
 export const metadata: Metadata = {
   title: "Christian Jarold David — Full-Stack Developer & UI/UX Designer",
@@ -21,8 +21,8 @@ export default function HomePage() {
       <ExperiencesSection />
       <ProjectsSection />
       <AboutSection />
+      <ToolboxSection />
       <ContactSection />
-      <GuestbookSection />
     </main>
   );
 }
