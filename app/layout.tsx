@@ -18,10 +18,10 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Christian Jarold David — Full-Stack Developer & UI/UX Designer",
+  title: "Christian Jarold David — Full-Stack Developer & AI Engineer",
   description:
     "Christian Jarold David builds pixel-perfect web interfaces, practical backend systems, and AI-assisted workflows for real products.",
-  keywords: ["Christian Jarold David", "Portfolio", "Full-Stack Developer", "UI/UX Designer"],
+  keywords: ["Christian Jarold David", "Portfolio", "Full-Stack Developer", "AI Engineer"],
   authors: [{ name: "Christian Jarold David" }],
 };
 

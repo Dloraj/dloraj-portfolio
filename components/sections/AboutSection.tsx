@@ -65,7 +65,7 @@ export default function AboutSection() {
               <div className="about-portrait-overlay" />
               <div className="about-portrait-details">
                 <span className="about-portrait-name">Christian Jarold</span>
-                <span className="about-portrait-tag">Full-Stack Dev & Designer</span>
+                <span className="about-portrait-tag">Full-Stack Dev & AI Engineer</span>
               </div>
             </div>
             {/* Parallax offset gold frame */}
