@@ -428,9 +428,29 @@ function ProjectImage({ title, isActive }: ProjectImageProps) {
 
   const [loadedGif, setLoadedGif] = useState<string | null>(null);
   const [isGifLoaded, setIsGifLoaded] = useState(false);
+  const [isPngLoaded, setIsPngLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    if (isActive && gifSrc && !loadedGif) {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 1024);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Preload PNG
+  useEffect(() => {
+    const img = new Image();
+    img.src = pngSrc;
+    img.onload = () => {
+      setIsPngLoaded(true);
+    };
+  }, [pngSrc]);
+
+  useEffect(() => {
+    if ((isActive || isMobile) && gifSrc && !loadedGif) {
       const img = new Image();
       img.src = gifSrc;
       img.onload = () => {
@@ -438,17 +458,21 @@ function ProjectImage({ title, isActive }: ProjectImageProps) {
         setIsGifLoaded(true);
       };
     }
-  }, [isActive, gifSrc, loadedGif]);
+  }, [isActive, isMobile, gifSrc, loadedGif]);
 
-  const showGif = isActive && isGifLoaded && loadedGif;
+  const showGif = (isActive || isMobile) && isGifLoaded && loadedGif;
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden" }}>
+    <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden", background: "rgba(255,255,255,0.01)" }}>
+      {/* Shimmer skeleton underlay */}
+      {!isPngLoaded && <div className="skeleton-shimmer" />}
+
       {/* Static PNG (always rendered as background/fallback) */}
       <img
         src={pngSrc}
         alt={`${title} Preview`}
         className="projects-glimpse-img"
+        onLoad={() => setIsPngLoaded(true)}
         style={{
           position: "absolute",
           top: 0,
@@ -456,7 +480,7 @@ function ProjectImage({ title, isActive }: ProjectImageProps) {
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          opacity: showGif ? 0 : 1,
+          opacity: !isPngLoaded ? 0 : (showGif ? 0 : 1),
           transition: "opacity 0.4s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
           zIndex: 1,
         }}
@@ -491,6 +515,33 @@ export default function ProjectsSection() {
   const [projectPage, setProjectPage] = useState(0);
   const [selectedCertificate, setSelectedCertificate] = useState<{ title: string; images: string[] } | null>(null);
   const [certModalIndex, setCertModalIndex] = useState(0);
+  const [chunkSize, setChunkSize] = useState(4);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setChunkSize(window.innerWidth < 768 ? 2 : 4);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Lock background scroll when certificate modal is open
+  useEffect(() => {
+    const pageWrapper = document.querySelector(".page-wrapper") as HTMLElement;
+    const body = document.body;
+    if (selectedCertificate) {
+      if (pageWrapper) pageWrapper.style.overflowY = "hidden";
+      body.style.overflow = "hidden";
+    } else {
+      if (pageWrapper) pageWrapper.style.overflowY = "auto";
+      body.style.overflow = "";
+    }
+    return () => {
+      if (pageWrapper) pageWrapper.style.overflowY = "auto";
+      body.style.overflow = "";
+    };
+  }, [selectedCertificate]);
 
   const onlyProjects = projects.filter(
     (p) => p.tag !== "Certification" && p.tag !== "Networking" && p.tag !== "Competition"
@@ -500,8 +551,8 @@ export default function ProjectsSection() {
   );
 
   const chunkedCertifications = [];
-  for (let i = 0; i < certifications.length; i += 4) {
-    chunkedCertifications.push(certifications.slice(i, i + 4));
+  for (let i = 0; i < certifications.length; i += chunkSize) {
+    chunkedCertifications.push(certifications.slice(i, i + chunkSize));
   }
 
   const handleTabChange = (tab: "projects" | "certification") => {
@@ -555,7 +606,7 @@ export default function ProjectsSection() {
           >
             {/* Slide 1: Projects Cinematic Carousel */}
             <div className={`projects-slide slide-projects ${activeTab === "projects" ? "active" : ""}`}>
-              
+
               {/* Top Project Selector Bar */}
               {onlyProjects.length > 1 && (
                 <div
@@ -710,7 +761,7 @@ export default function ProjectsSection() {
                             </div>
                           </div>
 
-                           {/* Right: Detailed text details card */}
+                          {/* Right: Detailed text details card */}
                           <div
                             className="project-details-card"
                             style={{
@@ -770,19 +821,19 @@ export default function ProjectsSection() {
                             >
                               {project.description}
                             </p>
-                             <div
-                               className="project-tech"
-                               aria-label="Technologies used"
-                               style={{
-                                 display: "flex",
-                                 flexWrap: "wrap",
-                                 gap: "8px"
-                               }}
-                             >
-                               {project.tech.map((t) => (
-                                 <TechChip key={t} name={t} />
-                               ))}
-                             </div>
+                            <div
+                              className="project-tech"
+                              aria-label="Technologies used"
+                              style={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                gap: "8px"
+                              }}
+                            >
+                              {project.tech.map((t) => (
+                                <TechChip key={t} name={t} />
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -810,13 +861,13 @@ export default function ProjectsSection() {
                     >
                       <div className="certifications-grid">
                         {chunk.map((cert) => (
-                          <article 
-                            key={cert.title} 
+                          <article
+                            key={cert.title}
                             className="project-card"
                             onClick={() => {
                               if (cert.certificateImage) {
-                                const images = Array.isArray(cert.certificateImage) 
-                                  ? cert.certificateImage 
+                                const images = Array.isArray(cert.certificateImage)
+                                  ? cert.certificateImage
                                   : [cert.certificateImage];
                                 setSelectedCertificate({ title: cert.title, images });
                                 setCertModalIndex(0);
@@ -888,11 +939,11 @@ export default function ProjectsSection() {
             </div>
           </div>
         </div>
-        
+
         {/* Certificate Modal */}
         {selectedCertificate && (
-          <div 
-            className="cert-modal-overlay" 
+          <div
+            className="cert-modal-overlay"
             onClick={() => {
               setSelectedCertificate(null);
               setCertModalIndex(0);
@@ -912,7 +963,7 @@ export default function ProjectsSection() {
               padding: '20px',
             }}
           >
-            <div 
+            <div
               className="cert-modal-content"
               onClick={(e) => e.stopPropagation()}
               style={{
@@ -937,7 +988,7 @@ export default function ProjectsSection() {
                     </p>
                   )}
                 </div>
-                <button 
+                <button
                   onClick={() => {
                     setSelectedCertificate(null);
                     setCertModalIndex(0);
@@ -971,15 +1022,15 @@ export default function ProjectsSection() {
               </div>
               <div style={{ position: 'relative', width: '100%', overflow: 'hidden', borderRadius: '8px', background: '#0a0a0a', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}>
                 {selectedCertificate.images[certModalIndex].toLowerCase().endsWith('.pdf') ? (
-                  <iframe 
-                    src={`${selectedCertificate.images[certModalIndex]}#toolbar=0&navpanes=0&view=Fit`} 
+                  <iframe
+                    src={`${selectedCertificate.images[certModalIndex]}#toolbar=0&navpanes=0&view=Fit`}
                     title={selectedCertificate.title}
                     style={{ width: '100%', height: '70vh', border: 'none', background: '#fff' }}
                   />
                 ) : (
-                  <img 
-                    src={selectedCertificate.images[certModalIndex]} 
-                    alt={selectedCertificate.title} 
+                  <img
+                    src={selectedCertificate.images[certModalIndex]}
+                    alt={selectedCertificate.title}
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
                       const placeholder = document.getElementById('cert-placeholder');
@@ -993,7 +1044,7 @@ export default function ProjectsSection() {
                     style={{ maxWidth: '100%', maxHeight: '70vh', objectFit: 'contain' }}
                   />
                 )}
-                <div 
+                <div
                   id="cert-placeholder"
                   style={{
                     display: 'none',
@@ -1014,7 +1065,7 @@ export default function ProjectsSection() {
                     Please save the certificate image as <strong>{selectedCertificate.images[certModalIndex]}</strong> in your project's <code>/public/certificates/</code> folder to display it here.
                   </p>
                 </div>
-                
+
                 {/* Navigation Arrows */}
                 {selectedCertificate.images.length > 1 && (
                   <>

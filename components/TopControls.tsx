@@ -90,6 +90,7 @@ export default function TopControls() {
     <div className="top-right-controls" style={{ gap: "10px" }}>
       {playing && currentSong && (
         <span
+          className="hidden-mobile-song"
           style={{
             fontSize: "9px",
             letterSpacing: "0.05em",

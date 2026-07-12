@@ -25,14 +25,17 @@ export default function AboutSection() {
   // Lock background scroll when modal is open
   useEffect(() => {
     const pageWrapper = document.querySelector(".page-wrapper") as HTMLElement;
-    if (!pageWrapper) return;
+    const body = document.body;
     if (isModalOpen) {
-      pageWrapper.style.overflowY = "hidden";
+      if (pageWrapper) pageWrapper.style.overflowY = "hidden";
+      body.style.overflow = "hidden";
     } else {
-      pageWrapper.style.overflowY = "auto";
+      if (pageWrapper) pageWrapper.style.overflowY = "auto";
+      body.style.overflow = "";
     }
     return () => {
-      pageWrapper.style.overflowY = "auto";
+      if (pageWrapper) pageWrapper.style.overflowY = "auto";
+      body.style.overflow = "";
     };
   }, [isModalOpen]);
 
@@ -51,6 +54,10 @@ export default function AboutSection() {
   return (
     <section id="about" className="snap-section" aria-label="About">
       <div className="section-inner">
+        <p className="section-label">Get to know me</p>
+        <h2 className="section-title">About Me</h2>
+        <div className="section-divider" aria-hidden="true" />
+
         <div className="about-grid">
 
           {/* Left Column — Premium Editorial Portrait */}
@@ -74,10 +81,6 @@ export default function AboutSection() {
 
           {/* Right Column — Editorial Bio & Details */}
           <div>
-            <p className="section-label">Get to know me</p>
-            <h2 className="section-title">About Me</h2>
-            <div className="section-divider" aria-hidden="true" />
-
             <div className="about-text">
               <p>
                 Hi! I&apos;m <strong style={{ color: "var(--text-primary)" }}>Jarold</strong>, someone who genuinely gets excited when an idea starts becoming something real.
