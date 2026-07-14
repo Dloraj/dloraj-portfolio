@@ -33,6 +33,20 @@ const projects: ProjectItem[] = [
     tech: ["Laravel", "Vue.js", "PHP", "SQLite", "FortiGate API", "Vite", "Axios", "Tailwind CSS"],
   },
   {
+    tag: "Agency Management + Finance + AI",
+    title: "AgencyOS Workspace",
+    description:
+      "An all-in-one agency operation management platform. Features client billing and invoicing, real-time resourcing, visual task tracking, team time logs, interactive dashboard analytics, and automated notification streams.",
+    tech: ["FastAPI", "React", "Python", "SQLite", "React Router", "Recharts", "SQLAlchemy", "Vite", "Uvicorn", "Celery", "Redis"],
+  },
+  {
+    tag: "HRM + Payroll + Finance",
+    title: "Wizora Payroll",
+    description:
+      "An HR and automated payroll management platform. Features employee lifecycle tracking, smart clock-in/out attendance logging, department hierarchical structures, leave/holiday approvals, custom loans amortization, and automated payslip generation.",
+    tech: ["Laravel", "Vite", "Tailwind CSS", "SQLite", "PHP", "JavaScript"],
+  },
+  {
     tag: "Certification",
     title: "Cisco Certified Support Technician (CCST) Cybersecurity",
     description:
@@ -416,7 +430,11 @@ function ProjectImage({ title, isActive }: ProjectImageProps) {
       ? "/dost3-portal.png"
       : title === "Queryous IT Autopilot"
         ? "/queryous.png"
-        : "/projects-glimpse.png";
+        : title === "AgencyOS Workspace"
+          ? "/agencyos.png"
+          : title === "Wizora Payroll"
+            ? "/wizora.png"
+            : "/projects-glimpse.png";
 
   const gifSrc = title === "Fishtastic Capstone"
     ? "/fishtastic.gif"
@@ -424,7 +442,11 @@ function ProjectImage({ title, isActive }: ProjectImageProps) {
       ? "/dost3-portal.gif"
       : title === "Queryous IT Autopilot"
         ? "/queryous.gif?v=6"
-        : null;
+        : title === "AgencyOS Workspace"
+          ? "/agencyos.gif"
+          : title === "Wizora Payroll"
+            ? "/wizora.gif"
+            : null;
 
   const [loadedGif, setLoadedGif] = useState<string | null>(null);
   const [isGifLoaded, setIsGifLoaded] = useState(false);
@@ -480,6 +502,7 @@ function ProjectImage({ title, isActive }: ProjectImageProps) {
           width: "100%",
           height: "100%",
           objectFit: "cover",
+          objectPosition: "top",
           opacity: !isPngLoaded ? 0 : (showGif ? 0 : 1),
           transition: "opacity 0.4s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
           zIndex: 1,
@@ -498,6 +521,7 @@ function ProjectImage({ title, isActive }: ProjectImageProps) {
             width: "100%",
             height: "100%",
             objectFit: "cover",
+            objectPosition: "top",
             opacity: showGif ? 1 : 0,
             transition: "opacity 0.4s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
             zIndex: 2,
@@ -700,7 +724,11 @@ export default function ProjectsSection() {
                         ? "jarold-portfolio://dost3-portal"
                         : project.title === "Queryous IT Autopilot"
                           ? "jarold-portfolio://queryous"
-                          : "jarold-portfolio://codechum-npc";
+                          : project.title === "AgencyOS Workspace"
+                            ? "jarold-portfolio://agencyos"
+                            : project.title === "Wizora Payroll"
+                              ? "jarold-portfolio://wizora-payroll"
+                              : "jarold-portfolio://codechum-npc";
 
                     return (
                       <div
